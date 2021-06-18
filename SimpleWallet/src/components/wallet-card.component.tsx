@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, StyleSheet, Animated, TouchableWithoutFeedback, I18nManager } from 'react-native';
+import { View, Image, StyleSheet, Animated, TouchableWithoutFeedback, I18nManager, Platform } from 'react-native';
 
 import { Layout, Text, withStyles, ThemeType } from 'react-native-ui-kitten';
 import LinearGradient from 'react-native-linear-gradient';
@@ -88,6 +88,8 @@ class WalletCardComponent extends React.PureComponent<IWalletCardProps, IWalletC
 }
 
 
+const platformIsAndroid: boolean = Platform.OS == 'android';
+
 // Styles ------------------------------------------------------
 const styles = StyleSheet.create({
   container: {
@@ -98,9 +100,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 64,
+    paddingTop: platformIsAndroid ? 0 : 64,
     marginHorizontal: 16,
-
   },
   headerText: {
     paddingTop: 16,
@@ -130,7 +131,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 12,
     minHeight: 190,
-    elevation: 5,
   },
   br: {
     backgroundColor: 'transparent',

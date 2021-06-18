@@ -11,9 +11,9 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import com.ismaeld.RNBuildConfig.BuildConfig;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
+import com.simplewallet.BrainTreeWrapper.BrainTreePackage;
 
 public class MainApplication extends NavigationApplication {
 
@@ -29,7 +29,7 @@ public class MainApplication extends NavigationApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
-          // packages.add(new MyReactNativePackage());
+           packages .add(new BrainTreePackage());
           return packages;
       }
 

@@ -15,6 +15,7 @@
 #import <ReactNativeNavigation/ReactNativeNavigation.h>
 #import "RNSplashScreen.h"
 
+#import "RNBraintree.h"
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -34,6 +35,9 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
+
+  [BTAppSwitch setReturnURLScheme:@"org.reactjs.native.example.SimpleWallet.paymentscheme"];
+
 
   NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
   [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];

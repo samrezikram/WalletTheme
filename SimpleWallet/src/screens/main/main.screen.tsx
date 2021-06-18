@@ -9,7 +9,7 @@
  import React from 'react';
  import { Dispatch, bindActionCreators } from 'redux';
  import { connect } from 'react-redux';
- import { Image, StyleSheet, View, Animated, TouchableOpacity, I18nManager, FlatList } from 'react-native';
+ import { Image, StyleSheet, View, Animated, TouchableOpacity, I18nManager, FlatList, NativeModules, Platform } from 'react-native';
 
  import { Layout, Text, withStyles, ThemeType } from 'react-native-ui-kitten';
  import { bind as autobind, debounce } from 'lodash-decorators';
@@ -26,6 +26,7 @@ import { WalletCard } from '@components/wallet-card.component';
 import { ITransaction } from '@models/app/transaction.model';
 import { TransactionCard } from '@components/transaction-card.component';
 
+import Braintree from './Braintree';
  // Debounce Decorator Function Options
  const debOptions: object = {leading: true, trailing: false};
 
@@ -78,26 +79,35 @@ private onPressedIn(): void {
 // ---------------------
 
 
-
-
-
    @autobind
    @debounce(500, debOptions)
-   private goBack(): void {
-     Navigator.popScreen(this.props.componentId);
-   }
+   private onPressSendPayment(): void {
+
+    if(Platform.OS === 'android') {
+      NativeModules.RNBraintree.setup('sandbox_6m8chzhc_582rwhs5bm3jdj9v').then((success)=> {
+        }).catch((error)=>{
+        });
+      NativeModules.RNBraintree.showPaymentViewController().then((nonce) => {
+          //payment succeeded, pass nonce to server
+          console.log('nonce: ' + nonce)
+        })
+        .catch((err)=> {
+          console.log(err)
+        });
+    } else {
+      Braintree.setup("sandbox_6m8chzhc_582rwhs5bm3jdj9v");
+
+      Braintree.showPaymentViewController().then((nonce) => {
+        //payment succeeded, pass nonce to server
+        console.log('nonce: ' + nonce)
+      })
+      .catch((err)=> {
+        console.log(err)
+      });
+    }
+  }
+
    // ---------------------
-
-
-  private renderListHeaderComponent() {
-    return (
-      <View style={[styles.walletHeader]}>
-        <Text textBreakStrategy="simple" style={[styles.headerText]}>
-          {'Wallet'}
-        </Text>
-      </View>
-    );
-  };
 
   renderSeparator = () => {
     return <View style={styles.separator} />;
@@ -105,7 +115,7 @@ private onPressedIn(): void {
 
   private renderSendButton() {
     return (
-      <TouchableOpacity style={[styles.sendRoot]} >
+      <TouchableOpacity style={[styles.sendRoot]} onPress={this.onPressSendPayment}>
         <View style={styles.icon}>
           <Icon
               name="wallet-outline"
@@ -157,13 +167,13 @@ private onPressedIn(): void {
         {<WalletCard/>}
         {this.renderSendButton()}
         <FlatList
-        ListHeaderComponent={this.renderTransactionsHeaderComponent}
-        style={{flex: 1}}
+          ListHeaderComponent={this.renderTransactionsHeaderComponent}
+          style={{flex: 1}}
                 data={this.props.transactionItems}
                 renderItem={this._renderItem}
                 keyExtractor={(_item, index) => `${index}`}
                 ItemSeparatorComponent={this.renderSeparator}
-              />
+        />
       </Layout>
     );
   }
@@ -173,7 +183,6 @@ private onPressedIn(): void {
  const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
    container: {
      flex: 1,
-    //  alignItems: 'center'
    },
    sendRoot: {
     marginHorizontal: 120,
@@ -198,7 +207,8 @@ private onPressedIn(): void {
   separator: {
     backgroundColor: '#d2d2d2',
     height: 0.5,
-    marginVertical: 16,
+    marginBottom: 4,
+    marginHorizontal: 50
   },
   transactionListSectionHeader: {
     paddingTop: 16,

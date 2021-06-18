@@ -1,5 +1,51 @@
 PODS:
   - boost-for-react-native (1.63.0)
+  - Braintree (4.37.1):
+    - Braintree/Card (= 4.37.1)
+    - Braintree/Core (= 4.37.1)
+    - Braintree/PayPal (= 4.37.1)
+    - Braintree/UI (= 4.37.1)
+  - Braintree/Apple-Pay (4.37.1):
+    - Braintree/Core
+  - Braintree/Card (4.37.1):
+    - Braintree/Core
+  - Braintree/Core (4.37.1)
+  - Braintree/DataCollector (4.37.1):
+    - Braintree/Core
+  - Braintree/PaymentFlow (4.37.1):
+    - Braintree/Card
+    - Braintree/Core
+    - Braintree/PayPalOneTouch
+  - Braintree/PayPal (4.37.1):
+    - Braintree/Core
+    - Braintree/PayPalOneTouch
+  - Braintree/PayPalDataCollector (4.37.1):
+    - Braintree/Core
+    - Braintree/PayPalUtils
+  - Braintree/PayPalOneTouch (4.37.1):
+    - Braintree/Core
+    - Braintree/PayPalDataCollector
+    - Braintree/PayPalUtils
+  - Braintree/PayPalUtils (4.37.1)
+  - Braintree/UI (4.37.1):
+    - Braintree/Card
+    - Braintree/Core
+  - Braintree/UnionPay (4.37.1):
+    - Braintree/Card
+    - Braintree/Core
+  - Braintree/Venmo (4.37.1):
+    - Braintree/Core
+    - Braintree/PayPalDataCollector
+  - BraintreeDropIn (8.1.4):
+    - BraintreeDropIn/DropIn (= 8.1.4)
+  - BraintreeDropIn/DropIn (8.1.4):
+    - Braintree/Card (~> 4.32)
+    - Braintree/Core (~> 4.32)
+    - Braintree/PaymentFlow (~> 4.32)
+    - Braintree/PayPal (~> 4.32)
+    - Braintree/UnionPay (~> 4.32)
+    - BraintreeDropIn/UIKit
+  - BraintreeDropIn/UIKit (8.1.4)
   - BVLinearGradient (2.5.6):
     - React
   - CocoaAsyncSocket (7.6.5)
@@ -331,6 +377,13 @@ PODS:
     - React
     - React-RCTImage
     - React-RCTText
+  - RNBraintreeDropIn (1.0.0):
+    - Braintree
+    - Braintree/Apple-Pay
+    - Braintree/DataCollector
+    - Braintree/Venmo
+    - BraintreeDropIn
+    - React
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNSVG (12.1.1):
@@ -394,6 +447,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDarkMode (from `../node_modules/react-native-dark-mode`)
   - ReactNativeNavigation (from `../node_modules/react-native-navigation`)
+  - RNBraintreeDropIn (from `../node_modules/react-native-braintree-dropin-ui/ios`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -402,6 +456,8 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - boost-for-react-native
+    - Braintree
+    - BraintreeDropIn
     - CocoaAsyncSocket
     - Flipper
     - Flipper-DoubleConversion
@@ -477,6 +533,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-dark-mode"
   ReactNativeNavigation:
     :path: "../node_modules/react-native-navigation"
+  RNBraintreeDropIn:
+    :path: "../node_modules/react-native-braintree-dropin-ui/ios"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNSVG:
@@ -488,6 +546,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  Braintree: 94a20907b70aeffb29c40380eec583d783a347b6
+  BraintreeDropIn: 073ef11637285efc5572b412079a34942c849ef9
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
@@ -529,6 +589,7 @@ SPEC CHECKSUMS:
   ReactCommon: 149906e01aa51142707a10665185db879898e966
   ReactNativeDarkMode: 0178ffca3b10f6a7c9f49d6f9810232b328fa949
   ReactNativeNavigation: 93712ba3b8d066da5db972bf4fda8ba11811d4da
+  RNBraintreeDropIn: d067eb9aed64cda5943257374a9d9f76f8bc6d38
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SimpleWallet</string>
+    <string name="SimpleWallet">Simple Wallet</string>
 </resources>

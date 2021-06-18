@@ -122,10 +122,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 def enableHermes = project.ext.react.get("enableHermes", false);
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -215,6 +212,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
+    implementation 'com.braintreepayments.api:drop-in:3.7.1'
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 

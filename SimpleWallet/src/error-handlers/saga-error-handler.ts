@@ -1,6 +1,5 @@
 
 import { ISagaThrownError } from '@models/app/errors.model';
-import { ErrorSeverity } from '@enums/error-severity.enum';
 
 
 import _ from 'lodash';
