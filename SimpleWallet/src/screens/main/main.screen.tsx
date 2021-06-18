@@ -9,7 +9,7 @@
  import React from 'react';
  import { Dispatch, bindActionCreators } from 'redux';
  import { connect } from 'react-redux';
- import { Image, StyleSheet, View, Animated, TouchableOpacity, I18nManager } from 'react-native';
+ import { Image, StyleSheet, View, Animated, TouchableOpacity, I18nManager, FlatList } from 'react-native';
 
  import { Layout, Text, withStyles, ThemeType } from 'react-native-ui-kitten';
  import { bind as autobind, debounce } from 'lodash-decorators';
@@ -20,27 +20,24 @@
  
  import { IAppScreenProps } from '@interfaces/app-screen-props.interface';
  import { IAppScreen } from '@interfaces/app-screen.interface';
- import { IIssueJSON } from '@models/app/issue-json.model';
- import { IIssueGroup } from '@models/actions-results.model';
  import { Navigator } from '@navigation/navigator';
- import { ScreenRoute } from '@enums/routes.enum';
- import { setGitHubIssuesFilter, loadGitHubIssueItemsAsync } from '@actions/app.actions';
+ import { loadTransactionItemsAsync } from '@actions/app.actions';
 import { WalletCard } from '@components/wallet-card.component';
+import { ITransaction } from '@models/app/transaction.model';
+import { TransactionCard } from '@components/transaction-card.component';
 
  // Debounce Decorator Function Options
  const debOptions: object = {leading: true, trailing: false};
 
  interface IMapStateToProps {
-   gitHubIssuesItems: IIssueJSON[];
-   gitHubIssuesGroups: IIssueGroup[];
-   gitHubIssuesTotalCount: number;
-   isLoadingGitHubIssuesItems: boolean;
-   gitHubIssuesLoadingError: string;
+   transactionItems: ITransaction[];
+   totalTransactionCount: number;
+   isLoadingTransactionItems: boolean;
+   transactionsLoadingError: string;
  }
 
  interface IMapDispatchToProps {
-  loadGitHubIssueItemsAsync: typeof loadGitHubIssueItemsAsync;
-  setGitHubIssuesFilter: typeof setGitHubIssuesFilter;
+  loadTransactionItemsAsync: typeof loadTransactionItemsAsync;
  }
 
  export interface IMainScreenProps extends IAppScreenProps, IMapStateToProps, IMapDispatchToProps {}
@@ -55,7 +52,9 @@ import { WalletCard } from '@components/wallet-card.component';
    public state: IMainScreenState = {};
    // ---------------------
 
-   componentDidMount(): void {}
+   componentDidMount(): void {
+    this.props.loadTransactionItemsAsync();
+   }
    // ---------------------
 
 
@@ -90,61 +89,101 @@ private onPressedIn(): void {
    // ---------------------
 
 
-    private renderListHeaderComponent() {
-      return (
-        <View style={[styles.walletHeader]}>
-          <Text textBreakStrategy="simple" style={[styles.headerText]}>
-            {'Wallet'}
-          </Text>
+  private renderListHeaderComponent() {
+    return (
+      <View style={[styles.walletHeader]}>
+        <Text textBreakStrategy="simple" style={[styles.headerText]}>
+          {'Wallet'}
+        </Text>
+      </View>
+    );
+  };
+
+  renderSeparator = () => {
+    return <View style={styles.separator} />;
+  };
+
+  private renderSendButton() {
+    return (
+      <TouchableOpacity style={[styles.sendRoot]} >
+        <View style={styles.icon}>
+          <Icon
+              name="wallet-outline"
+              size={25}
+              type="ionicon"
+              color={'#2f5fb3'}
+          />
         </View>
-      );
+        <Text numberOfLines={1} style={[styles.text]}>
+          {'Send'}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
+  private onTransactionCardPressed(transaction: ITransaction): () => void {
+    return () => {
+     if (transaction && transaction?.paymentData) {
+     }
     };
+  }
 
-    private renderSendButton() {
-      return (
-        <TouchableOpacity style={[styles.sendRoot]} >
-          <View style={styles.icon}>
-            <Icon
-                name="wallet-outline"
-                size={25}
-                type="ionicon"
-                color={'#2f5fb3'}
-            />
-          </View>
-          <Text numberOfLines={1} style={[styles.text]}>
-            {'Send'}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
-  
+  @autobind
+  private renderTransactionsHeaderComponent(): React.ReactElement {
+    return (
+      <Text category="h6" style={styles.transactionListSectionHeader}>
+        {'Transactions'}
+      </Text>
+    );
+  }
+  // ---------------------
 
-   public render(): React.ReactElement {
-     return (
-       <Layout level="2" style={styles.container}>
+  @autobind
+  private _renderItem({ item, index }: {item: ITransaction | any, index: number}): React.ReactElement {
+    return (
+      <View style={styles.transactionItemContainer}>
+        <TransactionCard
+          transaction={item}
+          onPress={this.onTransactionCardPressed(item)}/>
+      </View>
+    );
+  }
+  // ---------------------
+
+
+  public render(): React.ReactElement {
+    return (
+      <Layout level="2" style={styles.container}>
         {<WalletCard/>}
         {this.renderSendButton()}
-        </Layout>
-      );
-   }
+        <FlatList
+        ListHeaderComponent={this.renderTransactionsHeaderComponent}
+        style={{flex: 1}}
+                data={this.props.transactionItems}
+                renderItem={this._renderItem}
+                keyExtractor={(_item, index) => `${index}`}
+                ItemSeparatorComponent={this.renderSeparator}
+              />
+      </Layout>
+    );
+  }
  }
 
  // Styles -----------------------------------------------------------------------------------
  const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
    container: {
      flex: 1,
-     alignItems: 'center'
+    //  alignItems: 'center'
    },
    sendRoot: {
-    marginHorizontal: 16,
+    marginHorizontal: 120,
+    paddingVertical: 10,
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 6,
+    borderRadius: 5,
     backgroundColor: '#ccddf9',
-    width: 120, 
-    height: 50 
   },
   icon: {
     alignItems: 'center',
@@ -156,6 +195,19 @@ private onPressedIn(): void {
     backgroundColor: 'transparent',
     color: '#2f5fb3'
   },
+  separator: {
+    backgroundColor: '#d2d2d2',
+    height: 0.5,
+    marginVertical: 16,
+  },
+  transactionListSectionHeader: {
+    paddingTop: 16,
+    paddingHorizontal: 16
+  },
+  transactionItemContainer: {
+    paddingTop: 10,
+    marginBottom: 16
+  },
  });
  // ------------------------------------------------------------------------------------------
 
@@ -163,12 +215,10 @@ private onPressedIn(): void {
  // Connecting To Redux ----------------------------------------------------------------------
  function mapStateToProps(state: IGlobalState): any {
    return {
-     gitHubIssuesFilter: state.app.gitHubIssuesFilter,
-     gitHubIssuesItems: state.app.gitHubIssuesItems,
-     gitHubIssuesGroups: state.app.gitHubIssuesGroups,
-     gitHubIssuesTotalCount: state.app.totalCount,
-     isLoadingGitHubIssuesItems: state.app.isLoadingGitHubIssuesItems,
-     gitHubIssuesLoadingError: state.app.gitHubIssuesLoadingError
+     transactionItems: state.app.transactionItems,
+     totalTransactionCount: state.app.totalTransactionCount,
+     isLoadingTransactionItems: state.app.isLoadingTransactionItems,
+     transactionLoadingError: state.app.transactionLoadingError
    };
  }
  // -----------
@@ -176,8 +226,7 @@ private onPressedIn(): void {
  function mapDispatchToProps(dispatch: Dispatch<any>): any {
    return {
      ...bindActionCreators({
-      loadGitHubIssueItemsAsync,
-      setGitHubIssuesFilter
+      loadTransactionItemsAsync
      }, dispatch),
    };
  }

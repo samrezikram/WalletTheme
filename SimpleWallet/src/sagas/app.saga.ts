@@ -1,18 +1,16 @@
-import { IGitHubIssuesRequest, IGithubRepoIssuesResponse } from './../models/http/issue.model';
 import { SagaIterator } from 'redux-saga';
-import { takeLeading, takeLatest, put, call, select } from 'redux-saga/effects';
-
-import { LocalStorageKey } from '@enums/local-storage-keys.enum';
+import { takeLeading, takeLatest, put } from 'redux-saga/effects';
 import { AppActionsTypes } from '@enums/actions-types.enum';
 
 import { IFetchIssueGlobalError, ISagaThrownError } from '@models/app/errors.model';
 import { IGlobalState } from '@models/app/global-state.model';
-import { IIssueJSON } from '@models/app/issue-json.model';
-import { IIssueGroup, IGithubIssuesSagaTriggerObject } from '@models/actions-results.model';
+import { ITransactionSagaTriggerObject } from '@models/actions-results.model';
 
-import { _setDoneInitilizingApp, _setIsLoadingGitHubIssuesItems, _setTotalGitHubIssuesCount, _setGitHubIssuesItems, _setGitHubIssuesGroups, _setGitHubLoadingError, setGitHubIssuesFilter } from '@actions/app.actions';
+import { ITransaction } from './../models/app/transaction.model';
 
-import { getInitialAppState } from '@store/initial-state';
+
+import { _setDoneInitilizingApp, _setIsLoadingTransactionItems, _setTransactionItems, _setTransactionLoadingError, } from '@actions/app.actions';
+
 
 import { SagaErrorHandler } from '@error-handlers/saga-error-handler';
 import { emitNextAndComplete, throwError } from '@utils/rxjs-subject-safe-handler';
@@ -20,19 +18,13 @@ import { emitNextAndComplete, throwError } from '@utils/rxjs-subject-safe-handle
 import _ from 'lodash';
 import moment from 'moment';
 
-// Selectors ------------------------------------------------------------------------------------
-function getGitHubIssuesFilter(state: IGlobalState): IGitHubIssuesRequest {
-  return state.app.gitHubIssuesFilter || getInitialAppState().gitHubIssuesFilter || {} as IGitHubIssuesRequest;
+function getTransactionItems(state: IGlobalState): ITransaction[] {
+  return state.app.transactionItems ?? [];
 }
 // -------------------
 
-function getGitHubIssuesItems(state: IGlobalState): IIssueJSON[] {
-  return state.app.gitHubIssuesItems ?? [];
-}
-// -------------------
-
-function getTotalGitHubIssuesCount(state: IGlobalState): number {
-  return state.app.totalCount ?? 0;
+function getTotalTransactionsCount(state: IGlobalState): number {
+  return state.app.totalTransactionCount ?? 0;
 }
 // ----------------------------------------------------------------------------------------------
 
@@ -42,76 +34,43 @@ function* initAppStateSaga(): SagaIterator {
 }
 // -------------------
 
-function* githubRepositoryIssuesListSaga(sagaData: IGithubIssuesSagaTriggerObject): SagaIterator  {
-  const sagaName: string = 'githubRepositoryIssuesListSaga';
+function* transactionListSaga(sagaData: ITransactionSagaTriggerObject): SagaIterator  {
+  const sagaName: string = 'transactionListSaga';
   try {
-    const sendGitHubIssueRequest: IGitHubIssuesRequest = {} as IGitHubIssuesRequest;
-    if (sagaData && sagaData.payload &&  sagaData.payload.clearPreviousGitHubIssuesItems) {
-      yield put(_setTotalGitHubIssuesCount(0));
-      yield put(_setGitHubIssuesItems([]));
-    }
-    yield put(_setIsLoadingGitHubIssuesItems(true));
-    yield put(_setGitHubLoadingError(''));
-    const gitHubIssuesFilter: IGitHubIssuesRequest = _.cloneDeep(yield select(getGitHubIssuesFilter));
+    yield put(_setIsLoadingTransactionItems(true));
+    yield put(_setTransactionItems([]));
+    yield put(_setTransactionLoadingError(''));
 
-    
-    if (sagaData && sagaData.payload || (sagaData.payload.organization && sagaData.payload.repo)) {
-      sendGitHubIssueRequest.org = sagaData.payload.organization ? sagaData.payload.organization : 'organization';
-      sendGitHubIssueRequest.repo = sagaData.payload.repo ? sagaData.payload.repo : '';
-      sendGitHubIssueRequest.page = gitHubIssuesFilter.page;
-      sendGitHubIssueRequest.per_page = gitHubIssuesFilter.per_page;
+    const transactionData: ITransaction[] = require('./payment-list.json');
 
-      // const incomingGithubIssuesItems: IGithubRepoIssuesResponse = yield call(GitHubService.getRepositoryIssues.bind(GitHubService), sendGitHubIssueRequest);
 
-     
-      const currentGitHubIssuesItems: IIssueJSON[] = yield select(getGitHubIssuesItems);
-
-      yield put(_setIsLoadingGitHubIssuesItems(false));
-      yield put(_setGitHubLoadingError(''));
+    if (transactionData && !_.isEmpty(transactionData)) {
+      yield put(_setTransactionItems(transactionData));
+      yield put(_setIsLoadingTransactionItems(false));
       emitNextAndComplete(sagaData._observable, true);
     } else {
-      const handledError: ISagaThrownError = handleError(new Error, 'Abnormal Behavior from GitHub Rest Api. Fetch Issues returned "null" or a invalid Issues array', sagaName, sagaData.showErrorAlerts, sagaData.onErrorAlertDismissal);
-      yield put(_setGitHubLoadingError(handledError.message));
-      yield put(_setIsLoadingGitHubIssuesItems(false));
+      const handledError: ISagaThrownError = handleError(new Error, 'Unexpected data format', sagaName, sagaData.showErrorAlerts, sagaData.onErrorAlertDismissal);
+      yield put(_setTransactionLoadingError(handledError.message));
+      yield put(_setIsLoadingTransactionItems(false));
       emitNextAndComplete(sagaData._observable, false);
     }
   } catch (error) {
     console.log(error);
-    yield put(_setGitHubLoadingError(error));
-    yield put(_setIsLoadingGitHubIssuesItems(false));
-    yield put(_setGitHubIssuesItems([]));
+    yield put(_setTransactionLoadingError(error));
+    yield put(_setIsLoadingTransactionItems(false));
+    yield put(_setTransactionItems([]));
     emitNextAndComplete(sagaData._observable, false);
     throwError(sagaData._observable, handleError((_.isError(error) ? error : new Error), error, sagaName, sagaData.showErrorAlerts, sagaData.onErrorAlertDismissal));
   }
 }
 // -------------------
 
-/**
- * This is a helper saga to avoid duplicate code in other sagas
- */
-function* setGitHubIssuesItemsAndGroups(items: IIssueJSON[]): SagaIterator {
-  const gitHubIssuesGroups: IIssueGroup[] = [];
-  const groupedItems: {[key: string]: IIssueJSON[]} = _.groupBy(items, (item: IIssueJSON) => {
-    return moment.utc(item.created_at).local().format('YYYY-MM-DD');
-  });
-  _.each(groupedItems, (items: IIssueJSON[], key: string) => {
-    gitHubIssuesGroups.push({
-      date: key,
-      data: items
-    } as IIssueGroup);
-  });
-  yield put(_setGitHubIssuesItems(items));
-  yield put(_setGitHubIssuesGroups(gitHubIssuesGroups));
-}
-// ---------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------
-
 // ---------------------------------------------------------------------------------------------
 
 // Root App Saga -------------------------------------------------------------------------------
 export function* rootAppSaga() {
   yield takeLeading(AppActionsTypes.INIT_APP_STATE_SAGA, initAppStateSaga);
-  yield takeLatest(AppActionsTypes.LOAD_GITHUB_REPOSITORY_ISSUES_LIST_SAGA , githubRepositoryIssuesListSaga);
+  yield takeLatest(AppActionsTypes.LOAD_TRANSACTION_LIST_SAGA , transactionListSaga);
 
 }
 // ---------------------------------------------------------------------------------------------

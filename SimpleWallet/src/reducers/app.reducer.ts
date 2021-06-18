@@ -13,45 +13,31 @@ export function appReducer(state: IAppState = initialState.app, action: IAppActi
         doneInitializing: action.payload.doneInitializing
       } as IAppState;
     // ----------------------------------------------------------
-    case AppActionsTypes.SET_GITHUB_ISSUES_ITEMS:
+    case AppActionsTypes.SET_TRANSACTION_ITEMS:
       return {
         ...state,
-        gitHubIssuesItems: action.payload.gitHubIssuesItems
+        transactionItems: action.payload.transactionItems
       } as IAppState;
 
     // ----------------------------------------------------------
-    case AppActionsTypes.SET_IS_LOADING_GITHUB_ISSUE_ITEMS:
+    case AppActionsTypes.SET_IS_LOADING_TRANSACTION_ITEMS:
       return {
         ...state,
-        isLoadingGitHubIssuesItems: action.payload.isLoadingGitHubIssuesItems
+        isLoadingTransactionItems: action.payload.isLoadingTransactionItems
       } as IAppState;
     // ----------------------------------------------------------
 
-    case AppActionsTypes.SET_GITHUB_ISSUES_GROUPS:
+    case AppActionsTypes.SET_TOTAL_TRANSACTION_COUNT:
       return {
         ...state,
-        gitHubIssuesGroups: action.payload.gitHubIssuesGroups
+        totalTransactionCount: action.payload.totalTransactionCount
       } as IAppState;
     // ----------------------------------------------------------
 
-    case AppActionsTypes.SET_GITHUB_ISSUES_FILTER:
+    case AppActionsTypes.SET_TRANSACTION_LOADING_ERROR:
       return {
         ...state,
-        gitHubIssuesFilter: action.payload.gitHubIssuesFilter
-      } as IAppState;
-    // ----------------------------------------------------------
-
-    case AppActionsTypes.SET_TOTAL_GITHUB_ISSUES_COUNT:
-      return {
-        ...state,
-        totalCount: action.payload.totalCount
-      } as IAppState;
-    // ----------------------------------------------------------
-
-    case AppActionsTypes.SET_GITHUB_ISSUES_LOADING_ERROR:
-      return {
-        ...state,
-        gitHubIssuesLoadingError: action.payload.gitHubIssuesLoadingError
+        transactionLoadingError: action.payload.transactionLoadingError
       } as IAppState;
     // ----------------------------------------------------------
 

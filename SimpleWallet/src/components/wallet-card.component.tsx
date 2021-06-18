@@ -5,7 +5,7 @@ import { Layout, Text, withStyles, ThemeType } from 'react-native-ui-kitten';
 import LinearGradient from 'react-native-linear-gradient';
 import { bind as autobind, debounce } from 'lodash-decorators';
 
-import { IIssueJSON } from '@models/app/issue-json.model';
+import { ITransaction } from '@models/app/transaction.model';
 
 import _ from 'lodash';
 

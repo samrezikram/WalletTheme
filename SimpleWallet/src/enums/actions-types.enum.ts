@@ -12,17 +12,15 @@ export enum GlobalActionsTypes {
 // App Actions Types -------------------------------------------------------------------
 export enum AppActionsTypes {
   // Actions ----
-  SET_IS_LOADING_GITHUB_ISSUE_ITEMS = 'set_is_loading_github_issue_ITEMS',
-  SET_TOTAL_GITHUB_ISSUES_COUNT = 'set_total_github_issues_count',
-  SET_GITHUB_ISSUES_ITEMS = 'set_github_issues_items',
-  SET_GITHUB_ISSUES_GROUPS = 'set_github_issues_groups',
-  SET_GITHUB_ISSUES_LOADING_ERROR = 'set_github_issues_loading_error',
-  SET_GITHUB_ISSUES_FILTER = 'set_github_issues_filter',
+  SET_IS_LOADING_TRANSACTION_ITEMS = 'set_is_loading_transaction_items',
+  SET_TOTAL_TRANSACTION_COUNT = 'set_total_transaction_count',
+  SET_TRANSACTION_ITEMS = 'set_transaction_items',
+  SET_TRANSACTION_LOADING_ERROR = 'set_trnsaction_loading_error',
 
   // Sagas ------
   INIT_APP_STATE_SAGA = 'init_app_state_saga',
   SET_DONE_INITIALIZING_APP = 'set_done_initializing_app',
-  LOAD_GITHUB_REPOSITORY_ISSUES_LIST_SAGA = 'load_github_repository_issues_list_saga'
+  LOAD_TRANSACTION_LIST_SAGA = 'load_transaction_list_saga'
 }
 // -------------------------------------------------------------------------------------
 
