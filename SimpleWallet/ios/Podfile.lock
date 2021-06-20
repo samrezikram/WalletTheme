@@ -384,6 +384,10 @@ PODS:
     - Braintree/Venmo
     - BraintreeDropIn
     - React
+  - RNCAsyncStorage (1.12.1):
+    - React-Core
+  - RNDeviceInfo (5.6.5):
+    - React
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNSVG (12.1.1):
@@ -448,6 +452,8 @@ DEPENDENCIES:
   - ReactNativeDarkMode (from `../node_modules/react-native-dark-mode`)
   - ReactNativeNavigation (from `../node_modules/react-native-navigation`)
   - RNBraintreeDropIn (from `../node_modules/react-native-braintree-dropin-ui/ios`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -535,6 +541,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-navigation"
   RNBraintreeDropIn:
     :path: "../node_modules/react-native-braintree-dropin-ui/ios"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-community/async-storage"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNSVG:
@@ -590,6 +600,8 @@ SPEC CHECKSUMS:
   ReactNativeDarkMode: 0178ffca3b10f6a7c9f49d6f9810232b328fa949
   ReactNativeNavigation: 93712ba3b8d066da5db972bf4fda8ba11811d4da
   RNBraintreeDropIn: d067eb9aed64cda5943257374a9d9f76f8bc6d38
+  RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
+  RNDeviceInfo: c5f8f3a456adcbba405ace475254b08febc4c095
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4

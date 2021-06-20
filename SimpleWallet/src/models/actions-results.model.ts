@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs';
 import { GlobalActionsTypes, AppActionsTypes, ThemesActionsTypes } from '@enums/actions-types.enum';
 import { IAppState, IThemeState } from './app/global-state.model';
+import { ThemeName } from '@enums/theme-name.enum';
 
 
 // Global ------------------------------------------------------------------------------------------------------
@@ -35,6 +36,13 @@ export interface ITransactionSagaTriggerObject extends ISagaTriggerObject {
 export interface IThemeActionResult {
   type: ThemesActionsTypes;
   payload: IThemeState;
+}
+
+// Sagas -----------------
+export interface ISetThemeSagaTriggerObject extends ISagaTriggerObject {
+  payload: {
+    themeName: ThemeName;
+  }
 }
 
 // Saga Trigger ------------------------------------------------------------------------------------------------

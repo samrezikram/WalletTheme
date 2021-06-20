@@ -86,7 +86,7 @@ private onPressedIn(): void {
     if(Platform.OS === 'android') {
       NativeModules.RNBraintree.setup('sandbox_6m8chzhc_582rwhs5bm3jdj9v').then((success)=> {
         }).catch((error)=>{
-        });
+      });
       NativeModules.RNBraintree.showPaymentViewController().then((nonce) => {
           //payment succeeded, pass nonce to server
           console.log('nonce: ' + nonce)

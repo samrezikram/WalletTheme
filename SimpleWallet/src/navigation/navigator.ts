@@ -14,6 +14,7 @@ import { ErrorSource } from '@enums/error-sources.enum';
 
 export class Navigator {
 
+
   public static currentRootId: NavigationRoot | null = null;
   private static navigationRootBehaviorSubject: BehaviorSubject<NavigationRoot | null> = new BehaviorSubject<NavigationRoot | null>(null);
 
@@ -24,6 +25,13 @@ export class Navigator {
   private static modalDismissedListener: any = undefined;
 
   private static overlaysAllowed: boolean = true;
+
+
+  // Expose Navigation History ----------------------------------------------------------------------
+  public static getNavigationHistory(): INavigationHistory {
+    return _.cloneDeep(Navigator.navigationHistory || {} as INavigationHistory);
+  }
+  // ------------------------------------------------------------------------------------------------
 
   // Initializing Global Subscriptions --------------------------------------------------------------
   public static init(): void {
