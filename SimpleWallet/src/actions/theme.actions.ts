@@ -4,6 +4,7 @@ import { ThemeName, ThemeKind } from '@enums/theme-name.enum';
 import {
   IThemeActionResult,
   ISagaTriggerObject,
+  ISetThemeSagaTriggerObject,
 } from '@models/actions-results.model';
 
 /* ------------------------------------------------------------------ */
@@ -66,6 +67,16 @@ export function initThemeStateAsync(): ISagaTriggerObject {
 }
 // ----------------------
 
+export function setThemeAsync(themeName: ThemeName): ISetThemeSagaTriggerObject {
+  const result: ISetThemeSagaTriggerObject = {
+    type: ThemesActionsTypes.SET_THEME_SAGA,
+    payload: {
+      themeName
+    }
+  };
+  return result;
+}
+// ----------------------
 
 export function setAutoThemeAsync(): ISagaTriggerObject {
   const result: ISagaTriggerObject = {

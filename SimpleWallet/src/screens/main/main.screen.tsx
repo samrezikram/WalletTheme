@@ -9,24 +9,29 @@
  import React from 'react';
  import { Dispatch, bindActionCreators } from 'redux';
  import { connect } from 'react-redux';
- import { Image, StyleSheet, View, Animated, TouchableOpacity, I18nManager, FlatList, NativeModules, Platform } from 'react-native';
+ import { Image, Animated, StyleSheet, View, TouchableOpacity, I18nManager, FlatList, NativeModules, Platform } from 'react-native';
 
- import { Layout, Text, withStyles, ThemeType } from 'react-native-ui-kitten';
+ import { Layout, Text, withStyles, ThemeType, Toggle } from 'react-native-ui-kitten';
  import { bind as autobind, debounce } from 'lodash-decorators';
  import { Avatar, Badge, Icon, ListItem } from 'react-native-elements';
 
- 
  import { IGlobalState } from '@models/app/global-state.model';
+ import { ITransaction } from '@models/app/transaction.model';
+
+ import { ThemeKind, ThemeName } from '@enums/theme-name.enum';
+
  
  import { IAppScreenProps } from '@interfaces/app-screen-props.interface';
  import { IAppScreen } from '@interfaces/app-screen.interface';
  import { Navigator } from '@navigation/navigator';
+ 
  import { loadTransactionItemsAsync } from '@actions/app.actions';
-import { WalletCard } from '@components/wallet-card.component';
-import { ITransaction } from '@models/app/transaction.model';
-import { TransactionCard } from '@components/transaction-card.component';
+ import { setThemeAsync } from '@actions/theme.actions';
 
-import Braintree from './Braintree';
+ import { WalletCard } from '@components/wallet-card.component';
+ import { TransactionCard } from '@components/transaction-card.component';
+
+ import Braintree from './Braintree';
  // Debounce Decorator Function Options
  const debOptions: object = {leading: true, trailing: false};
 
@@ -35,10 +40,12 @@ import Braintree from './Braintree';
    totalTransactionCount: number;
    isLoadingTransactionItems: boolean;
    transactionsLoadingError: string;
+   themeKind?: ThemeKind
  }
 
  interface IMapDispatchToProps {
   loadTransactionItemsAsync: typeof loadTransactionItemsAsync;
+  setThemeAsync: typeof setThemeAsync;
  }
 
  export interface IMainScreenProps extends IAppScreenProps, IMapStateToProps, IMapDispatchToProps {}
@@ -47,8 +54,8 @@ import Braintree from './Braintree';
 
 
  class MainScreenComponent extends React.Component<IMainScreenProps, IMainScreenState> implements IAppScreen {
-
-  private readonly testIdPrefix: string = 'main_screen';
+   
+   private readonly testIdPrefix: string = 'main_screen';
 
    public state: IMainScreenState = {};
    // ---------------------
@@ -58,25 +65,6 @@ import Braintree from './Braintree';
    }
    // ---------------------
 
-
-
-private scaleValue = new Animated.Value(1.0);
-
-private onPressedIn(): void {
-  const animations: Animated.CompositeAnimation[] = [
-    Animated.spring(this.scaleValue, {
-      toValue: 0.9,
-      useNativeDriver: true
-    }),
-    Animated.timing(this.scaleValue, {
-      toValue: 1.0,
-      duration: 50,
-      useNativeDriver: true
-    })
-  ];
-  Animated.parallel(animations).start();
-}
-// ---------------------
 
 
    @autobind
@@ -100,18 +88,42 @@ private onPressedIn(): void {
       Braintree.showPaymentViewController().then((nonce) => {
         //payment succeeded, pass nonce to server
         console.log('nonce: ' + nonce)
-      })
-      .catch((err)=> {
+      }).catch((err)=> {
         console.log(err)
       });
     }
   }
-
-   // ---------------------
+  // ---------------------
 
   renderSeparator = () => {
     return <View style={styles.separator} />;
   };
+
+  @autobind
+  @debounce(500, debOptions)
+  private onActiveThemeCheckedChange(isChecked: boolean): void {
+    if (this.props.setThemeAsync) {
+      if(isChecked) {
+        this.props.setThemeAsync(ThemeName.Blue);
+        // this.onPressedInAnimation()
+      } else {
+        this.props.setThemeAsync(ThemeName.Light);
+        // this.onPressedInAnimation()
+
+      }    
+    }
+  }
+
+  
+  private renderToggleTheme() {
+    return (
+      <View style={styles.themes}>
+        <Text style={styles.appearance}>Appearance</Text>
+        <Toggle style={styles.toggle} checked={this.props.themeKind == ThemeKind.Dark ? true : false} 
+        onChange={this.onActiveThemeCheckedChange}/>
+      </View>   
+    );
+  }
 
   private renderSendButton() {
     return (
@@ -164,6 +176,7 @@ private onPressedIn(): void {
   public render(): React.ReactElement {
     return (
       <Layout level="2" style={styles.container}>
+        {this.renderToggleTheme()}
         {<WalletCard/>}
         {this.renderSendButton()}
         <FlatList
@@ -173,7 +186,7 @@ private onPressedIn(): void {
                 renderItem={this._renderItem}
                 keyExtractor={(_item, index) => `${index}`}
                 ItemSeparatorComponent={this.renderSeparator}
-        />
+        /> 
       </Layout>
     );
   }
@@ -181,10 +194,25 @@ private onPressedIn(): void {
 
  // Styles -----------------------------------------------------------------------------------
  const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
-   container: {
+  container: {
      flex: 1,
-   },
-   sendRoot: {
+     paddingTop: 44 + 2
+  }, 
+  themes: {
+     flexDirection: 'row',
+     justifyContent: 'flex-end',
+     alignItems: 'center',
+     paddingHorizontal: 16,
+  },
+  appearance: {
+    fontSize: 15,
+    paddingVertical: 5,
+    paddingRight: 8,
+    color: '#2f5fb3'
+  },
+  toggle: {
+  },
+  sendRoot: {
     marginHorizontal: 120,
     paddingVertical: 10,
     overflow: 'hidden',
@@ -218,6 +246,7 @@ private onPressedIn(): void {
     paddingTop: 10,
     marginBottom: 16
   },
+  
  });
  // ------------------------------------------------------------------------------------------
 
@@ -228,7 +257,8 @@ private onPressedIn(): void {
      transactionItems: state.app.transactionItems,
      totalTransactionCount: state.app.totalTransactionCount,
      isLoadingTransactionItems: state.app.isLoadingTransactionItems,
-     transactionLoadingError: state.app.transactionLoadingError
+     transactionLoadingError: state.app.transactionLoadingError,
+     themeKind: state.theme.themeKind
    };
  }
  // -----------
@@ -236,7 +266,8 @@ private onPressedIn(): void {
  function mapDispatchToProps(dispatch: Dispatch<any>): any {
    return {
      ...bindActionCreators({
-      loadTransactionItemsAsync
+      loadTransactionItemsAsync,
+      setThemeAsync,
      }, dispatch),
    };
  }

@@ -9,6 +9,9 @@ import { ITransaction } from '@models/app/transaction.model';
 
 import _ from 'lodash';
 
+ // Debounce Decorator Function Options
+ const debOptions: object = {leading: true, trailing: false};
+
 interface IWalletCardState {
   propsAreValid: boolean;
 }
@@ -25,6 +28,31 @@ class WalletCardComponent extends React.PureComponent<IWalletCardProps, IWalletC
   }
 
   componentDidMount(): void {}
+  // ---------------------
+
+  private scaleValue = new Animated.Value(1.0);
+
+
+  @autobind
+  @debounce(500, debOptions)
+  private onPressedInAnimation(): void {
+      Animated.spring(this.scaleValue, {
+        toValue: 0.5,
+        duration: 50,
+        useNativeDriver: true
+      }).start();   
+  }
+  // ---------------------
+
+    @autobind
+  @debounce(500, debOptions)
+  private onPressedOutAnimation(): void {
+      Animated.spring(this.scaleValue, {
+        toValue: 1.0,
+        duration: 50,
+        useNativeDriver: true
+      }).start();   
+  }
   // ---------------------
 
   @autobind
@@ -45,7 +73,7 @@ class WalletCardComponent extends React.PureComponent<IWalletCardProps, IWalletC
       </View>
     );
   };
-  private scaleValue = new Animated.Value(1.0);
+
 
   render(): React.ReactElement {
     return (
@@ -55,13 +83,14 @@ class WalletCardComponent extends React.PureComponent<IWalletCardProps, IWalletC
            style={[styles.walletCardRoot, { opacity: 0.5, transform: [{ scale: this.scaleValue }] }]}
            shadowOpacity={25 / 100}
            shadowOffset={{ width: 0, height: 3 }}
-           shadowRadius={8}>
+           shadowRadius={8}
+           >
            {
              <TouchableWithoutFeedback
-               onPress={() => {
-               }}>
+              onPressIn={this.onPressedInAnimation()}
+              onPressOut={this.onPressedOutAnimation()}>
                  <LinearGradient colors={ ['#1ce6eb', '#296fc5', '#3500A2']} style={styles.gradients}> 
-                   <Image style={{width: 99, height: 94, position: 'absolute', bottom: 0, right: 0,}} 
+                   <Image style={styles.image} 
                    source={I18nManager.isRTL ? require('./../../assets/lnd-shape-rtl.png') : require('./../../assets/lnd-shape.png')}/>
                    <Text style={styles.br} />
                    <Text
@@ -100,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: platformIsAndroid ? 0 : 64,
+    paddingTop: 0,
     marginHorizontal: 16,
   },
   headerText: {
@@ -115,6 +144,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
+    borderRadius: 12
   },
   balance: {
     paddingTop: 16,

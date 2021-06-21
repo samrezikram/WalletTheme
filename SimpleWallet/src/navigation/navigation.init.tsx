@@ -10,7 +10,6 @@ import { ScreenRoute, ModalRoute, OverlayRoute } from '@enums/routes.enum';
 import { setDefaultNavigationOptions } from './default-navigation-options';
 import { Navigator } from './navigator';
 import { AppInitScreen, IAppInitScreenProps } from '@screens/app-init/app-init.screen';
-
 import { MainScreen } from '@screens/main/main.screen';
 
 export class NavigationInitializer {
