@@ -19,7 +19,7 @@ Install the dependencies
 3- react-native start
 ```
 
-[![Simple Wallet Theme and nonce](https://github.com/samrezikram/WalletTheme/blob/master/Common/simpleWallet.gif)](https://www.linkedin.com/in/samrezikram/)
+[![Simple Wallet Theme and nonce](https://github.com/samrezikram/WalletTheme/blob/master/Common/simpleWallet.gif width="480" height="1039")](https://www.linkedin.com/in/samrezikram/)
 
 
 * ### Improvements:
