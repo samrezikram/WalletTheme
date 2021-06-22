@@ -155,17 +155,19 @@ android {
     /* ********************** Signing Configurations ************************** */
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            if (project.hasProperty('SIMPLEWALLET_STORE_FILE')) {
+                storeFile file(SIMPLEWALLET_STORE_FILE)
+                storePassword SIMPLEWALLET_STORE_PASSWORD
+                keyAlias SIMPLEWALLET_KEY_ALIAS
+                keyPassword SIMPLEWALLET_KEY_PASSWORD
+            }
         }
         release {
-            if (project.hasProperty('APC_STORE_FILE')) {
-                storeFile file(APC_STORE_FILE)
-                storePassword APC_STORE_PASSWORD
-                keyAlias APC_KEY_ALIAS
-                keyPassword APC_KEY_PASSWORD
+            if (project.hasProperty('SIMPLEWALLET_STORE_FILE')) {
+                storeFile file(SIMPLEWALLET_STORE_FILE)
+                storePassword SIMPLEWALLET_STORE_PASSWORD
+                keyAlias SIMPLEWALLET_KEY_ALIAS
+                keyPassword SIMPLEWALLET_KEY_PASSWORD
             }
         }
     }
